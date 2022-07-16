@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +8,11 @@ import { useNavigate } from "react-router-dom";
 function Add() {
     const navigate = useNavigate();
     const [googleError, setGoogleError] = useState('');
+    onAuthStateChanged(auth, (user) => {
+	if (!user) {
+	    navigate("/")
+	} 
+    })
 
     return (
 	<>

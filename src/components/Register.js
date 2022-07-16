@@ -1,12 +1,17 @@
 import  React, { useState } from "react";
 import { auth } from "../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { Formik, Form, Field } from "formik";
 import { useNavigate } from "react-router-dom";
 
 function Register(){
     const [googleError, setGoogleError] = useState('');
     const navigate = useNavigate();
+    onAuthStateChanged(auth, (user) => {
+	if (user) {
+	    navigate("/")
+	} 
+    })
 
 	return (
 	    <>

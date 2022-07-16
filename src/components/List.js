@@ -1,12 +1,18 @@
-import React, { useState } from "react";
-import { db } from "../firebase";
+import React, { useState, useEffect } from "react";
+import { db, auth } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import { Formik, Field, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 
 function List() {
     const navigate = useNavigate();
     const [items, setItems] = useState([]);
+    onAuthStateChanged(auth, (user) => {
+	if (!user) {
+	    navigate("/")
+	} 
+    })
 
     return (
 	<>
