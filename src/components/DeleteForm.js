@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { doc, deleteDoc } from "firebase/firestore";
 
 function DeleteForm(props) {
     const [isSubmitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
+    onAuthStateChanged(auth, (user) => {
+	if (user) {
+	    if (user.uid !== props.item.uid) {
+		navigate("/");
+	    }
+	} 
+    });
 
     async function deleteBookGoogle(event){
 	event.preventDefault();
@@ -14,7 +22,7 @@ function DeleteForm(props) {
 	await deleteDoc(itemDoc);
 	setSubmitting(false);
 	navigate("/");
-    }
+    };
 
     return (
 	<>

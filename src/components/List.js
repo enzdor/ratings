@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { db, auth } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { Formik, Field, Form } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -8,15 +8,20 @@ import { useNavigate } from "react-router-dom";
 function List() {
     const navigate = useNavigate();
     const [items, setItems] = useState([]);
+    const [googleUser, setGoogleUser] = useState({});
+    const [googleError, setGoogleError] = useState('');
     onAuthStateChanged(auth, (user) => {
 	if (!user) {
 	    navigate("/")
-	} 
+	} else {
+	    setGoogleUser(user);
+	}
     })
 
     return (
 	<>
 	    <h1>list</h1>
+	    <h1>{googleError}</h1>
 	    <Formik
 		initialValues={{ type: '' }}
 		validate={values => {
@@ -26,9 +31,15 @@ function List() {
 		    }
 		}}
 		onSubmit={ async (values, { setSubmitting }) => {
-		    const list = await getDocs(collection(db, values.type));
-		    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-		    setSubmitting(false);
+		    try {
+			const q = query(collection(db, values.type), where("uid", "==", googleUser.uid));
+			const list = await getDocs(q);
+			setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+			setSubmitting(false);
+		    } catch (e) {
+			setGoogleError(e.message);
+			setSubmitting(false);
+		    }
 		}}
 	    >
 		{({ isSubmitting }) => (

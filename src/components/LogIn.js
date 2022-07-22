@@ -1,8 +1,22 @@
 import  React, { useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
+import MyTextField from "./MyTextField";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import * as yup from "yup";
+
+
+const validationSchema = yup.object({
+    email: yup.string().email().required(),
+	    password: yup.string().min(6).required()
+})
+
 
 function LogIn(){
     const [googleError, setGoogleError] = useState('');
@@ -14,34 +28,54 @@ function LogIn(){
     })
 
     return (
-	<>
-	    <h1>log in</h1>
-	    <h2>{googleError}</h2>
-	    <Formik
-		initialValues={{email: '', password: ''}}
-		onSubmit={ async (values, { setSubmitting }) => {
-		    setSubmitting(true);
-		    try {
-			await signInWithEmailAndPassword(auth, values.email, values.password);
-			setSubmitting(false);
-			navigate('/');
-		    } catch (e) {
-			setGoogleError(e.message);
-			setSubmitting(false);
-		    }
-		}}
-	    >
+	<Formik 
+	    initialValues={{email: '', password: ''}}
+	    onSubmit={async (values, { setSubmitting }) => {
+		setSubmitting(true);
+		try {
+		    await signInWithEmailAndPassword(auth, values.email, values.password);
+		    setSubmitting(false);
+		    navigate('/');
+		} catch (e) {
+		    setGoogleError(e.message);
+		    setSubmitting(false);
+		}
+	    }}
+	    validationSchema={validationSchema}
+	    enableReinitialize={true}
+	>
 	    {({ isSubmitting }) => (
-		<Form>
-		    <Field type="email" name="email" />
-		    <Field type="password" name="password" />
-		    <button type="submit" disabled={isSubmitting}>
-			submit
-		    </button>
-		</Form>
+		    <Form>
+			<Container 
+			    maxWidth="xs" 
+			    sx={{display: "flex", 
+				alignItems: "center", 
+				flexDirection: "column", 
+				mt: 4
+			    }}
+			>
+			    <Typography variant="h3" sx={{my: 1}}>log in</Typography>
+			    <Typography variant="h6" sx={{my: 1}}>{googleError}</Typography>
+			    <Stack sx={{width: "100%"}}>
+				<MyTextField 
+				    id="email"
+				    name="email"
+				    label="Email"
+				/>
+				<MyTextField 
+				    id="password"
+				    name="password"
+				    type="password"
+				    label="Password"
+				/>
+				<Button type="submit" disabled={isSubmitting} variant="contained" sx={{my: 3}}>
+				    Submit
+				</Button>
+			    </Stack>
+			</Container>
+		    </Form>
 	    )}
 	    </Formik>
-	</>
     )
 }
 

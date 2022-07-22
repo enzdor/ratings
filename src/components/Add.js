@@ -2,66 +2,109 @@ import React, { useState } from "react";
 import { db, auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
+import MyTextField from "./MyTextField";
+import MyRadio from "./MyRadio";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import * as yup from "yup";
+
+
+const validationSchema = yup.object({
+    name: yup.string().required(),
+    type: yup.string().required(),
+    rating: yup.number().required().min(0).max(10),
+    consumed: yup.string().required()
+})
+
 
 function Add() {
     const navigate = useNavigate();
     const [googleError, setGoogleError] = useState('');
+    const [googleUser, setGoogleUser] = useState({});
     onAuthStateChanged(auth, (user) => {
 	if (!user) {
-	    navigate("/")
-	} 
+	    navigate("/");
+	} else {
+	    setGoogleUser(user);
+	}
     })
 
     return (
-	<>
-	    <h1>add</h1>
-	    <Formik
-		initialValues={{name: '', type: '', rating: ''}}
-		validate={ values => {
-		    const errors = {};
-		    if (!values.name) {
-			    errors.name = "Required";
-		    } else if (!values.type) {
-			    errors.type = "Required";
-		    } else if (!values.rating) {
-			    errors.rating = "Required";
-		    }
-
-		    return errors;
-		}}
-		onSubmit={ async (values, { setSubmitting }) => {
-		    try {
-			    await addDoc(collection(db, "banana"), {
-				    name: values.name,
-				    type: values.type,
-				    rating: values.rating
-			    });
-			    navigate('/');
-		    } catch (e) {
-			    setGoogleError(e.message);
-			    setSubmitting(false);
-		    }
-
-		}}
+	<Formik
+	    initialValues={{name: '', type: '', rating: '', consumed: ''}}
+	    onSubmit={async (values, { setSubmitting }) => {
+		try {
+		    await addDoc(collection(db, "banana"), {
+			    name: values.name,
+			    type: values.type,
+			    rating: values.rating,
+			    uid: googleUser.uid,
+		    });
+		    navigate('/');
+		} catch (e) {
+		    setGoogleError(e.message);
+		    setSubmitting(false);
+		}
+	    }}
+	    validationSchema={validationSchema}
+	    enableReinitialize={true}
 	>
-		{({ isSubmitting }) => (
-		    <Form>
-			<h3>{googleError}</h3>
-			<Field type="text" name="name"/>
-			<ErrorMessage name="name" component="h3" />
-			<Field type="text" name="type"/>
-			<ErrorMessage name="type" component="h3" />
-			<Field type="number" name="rating" max="10" min="0" />
-			<ErrorMessage name="rating" component="h3" />
-			<button type="submit" disabled={isSubmitting}>
-			    submit
-			</button>
-		    </Form>
-		)}	
-	    </Formik>
-	</>
+	    {({ isSubmitting }) => (
+		<Form>
+		    <Container 
+			maxWidth="xs" 
+			sx={{
+			    display: "flex", 
+			    alignItems: "center", 
+			    flexDirection: "column", 
+			    mt: 4
+			}}
+		    >
+			<Typography variant="h3" sx={{my: 1}}>add</Typography>
+			<Typography variant="h6" sx={{my: 1}}>{googleError}</Typography>
+			<Stack>
+			    <MyTextField
+				id="name"
+				name="name"
+				label="Name"
+			    />
+			    <MyTextField
+				id="type"
+				name="type"
+				label="Type"
+			    />
+			    <MyTextField
+				id="rating"
+				name="rating"
+				label="Rating"
+				type="number"
+			    />
+			    <MyRadio
+				id="true"
+				name="consumed"
+				value="true"
+				label="true"
+				type="radio"
+			    />
+			    <MyRadio
+				id="false"
+				name="consumed"
+				value="false"
+				label="false"
+				type="radio"
+			    />
+			    <Button type="submit" variant="contained" disabled={isSubmitting} sx={{my: 3}}>
+				Submit
+			    </Button>
+			</Stack>
+		    </Container>
+		</Form>
+	    )}
+	</Formik>
     )
 }
 

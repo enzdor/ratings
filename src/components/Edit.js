@@ -8,6 +8,7 @@ import { getDoc, doc } from "firebase/firestore";
 function Edit() {
 	const params = useParams();
 	const [item, setItem] = useState({});
+	const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
 	onAuthStateChanged(auth, (user) => {
 	    if (!user) {
@@ -19,18 +20,18 @@ function Edit() {
 		const itemDoc = doc(db, "banana", params.id);
 		const newItem = await getDoc(itemDoc);
 		setItem({ ...newItem.data(), id: params.id });
+		setLoading(false);
 	}
 
 
 	useEffect(() => {
+		setLoading(true);
 		getGoogleDoc();
 	}, [])
 	return (
-		<>
-			<h1>edit</h1>
-			<h2>{item.name}</h2>
-			<EditForm item={item} />
-		</>
+	    <>
+		{loading ? <h1>loading</h1> : <EditForm item={item} />}
+	    </>
 	)
 
 }
