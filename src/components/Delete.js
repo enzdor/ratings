@@ -8,9 +8,11 @@ import { useNavigate } from "react-router-dom";
 
 function Delete() {
 	const [item, setItem] = useState({});
+	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	onAuthStateChanged(auth, (user) => {
 	    if (!user) {
+		setLoading(false);
 		navigate("/")
 	    } 
 	})
@@ -19,6 +21,7 @@ function Delete() {
 		const itemDoc = doc(db, "banana", params.id);
 		const newItem = await getDoc(itemDoc);
 		setItem({ ...newItem.data(), id: params.id });
+		setLoading(false);
 	}
 
 
@@ -28,10 +31,9 @@ function Delete() {
 
 	const params = useParams();
 	return (
-		<>
-			<h1>delete</h1>
-			<DeleteForm item={item} />
-		</>
+	    <>
+		{loading ? <h1>loading</h1> : <DeleteForm item={item} />} 
+	    </>
 	)
 }
 

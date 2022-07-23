@@ -43,6 +43,7 @@ function Add() {
 			    type: values.type,
 			    rating: values.rating,
 			    uid: googleUser.uid,
+			    consumed: values.consumed,
 		    });
 		    navigate('/');
 		} catch (e) {
@@ -66,7 +67,7 @@ function Add() {
 		    >
 			<Typography variant="h3" sx={{my: 1}}>add</Typography>
 			<Typography variant="h6" sx={{my: 1}}>{googleError}</Typography>
-			<Stack>
+			<Stack sx={{width: "100%"}}>
 			    <MyTextField
 				id="name"
 				name="name"

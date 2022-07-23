@@ -8,10 +8,11 @@ import { getDoc, doc } from "firebase/firestore";
 function Edit() {
 	const params = useParams();
 	const [item, setItem] = useState({});
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	onAuthStateChanged(auth, (user) => {
 	    if (!user) {
+		setLoading(false);
 		navigate("/")
 	    } 
 	})
@@ -25,7 +26,6 @@ function Edit() {
 
 
 	useEffect(() => {
-		setLoading(true);
 		getGoogleDoc();
 	}, [])
 	return (
