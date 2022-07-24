@@ -14,7 +14,7 @@ import * as yup from "yup";
 
 const validationSchema = yup.object({
     email: yup.string().email().required(),
-	    password: yup.string().min(6).required()
+    password: yup.string().min(6).required()
 })
 
 
@@ -51,7 +51,7 @@ function LogIn(){
 			    sx={{display: "flex", 
 				alignItems: "center", 
 				flexDirection: "column", 
-				mt: 4
+				mt: 1
 			    }}
 			>
 			    <Typography variant="h3" sx={{my: 1}}>log in</Typography>

@@ -54,7 +54,7 @@ function Add() {
 	    validationSchema={validationSchema}
 	    enableReinitialize={true}
 	>
-	    {({ isSubmitting }) => (
+	    {({ isSubmitting, errors, touched }) => (
 		<Form>
 		    <Container 
 			maxWidth="xs" 
@@ -62,7 +62,7 @@ function Add() {
 			    display: "flex", 
 			    alignItems: "center", 
 			    flexDirection: "column", 
-			    mt: 4
+			    mt: 1
 			}}
 		    >
 			<Typography variant="h3" sx={{my: 1}}>add</Typography>
@@ -84,6 +84,8 @@ function Add() {
 				label="Rating"
 				type="number"
 			    />
+			    <Typography variant="h6">Consumed:</Typography>
+			    <Typography variant="body1" sx={{color: "#d32f2f"}}>{errors.consumed && touched.consumed ? errors.consumed : <></>}</Typography>
 			    <MyRadio
 				id="true"
 				name="consumed"
