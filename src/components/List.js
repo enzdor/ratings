@@ -15,6 +15,14 @@ import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
+import * as yup from "yup";
+
+const validationSchema = yup.object({
+    name: yup.string(),
+    type: yup.string(),
+    rating: yup.number().min(0).max(10),
+    consumed: yup.string()
+})
 
 function List() {
     const navigate = useNavigate();
@@ -31,104 +39,198 @@ function List() {
 
     return (
 	<>
-	    <Header />
 	    <Container>
 		<Formik
 		    initialValues={{ name: '', type: '', consumed: ''}}
-		    validate={values => {
-			const errors = {};
-			if (!values.type) {
-			    errors.type = "Required";
-			}
-		    }}
+		    validationSchema={validationSchema}
 		    onSubmit={ async (values, { setSubmitting }) => {
 			try {
 			    if (values.consumed !== "any" && values.consumed !== "") {
 				if (values.name !== "") {
 				    if (values.type !== "") {
-					const q = query(
-					    collection(db, "banana"), 
-					    where("uid", "==", googleUser.uid), 
-					    where("consumed", "==", values.consumed),
-					    where("name", "==", values.name),
-					    where("type", "==", values.type)
-					);
-					const list = await getDocs(q);
-					setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-					setSubmitting(false);
+					if (values.rating !== "") {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("consumed", "==", values.consumed),
+						where("name", "==", values.name),
+						where("type", "==", values.type),
+						where("rating", "==", values.rating)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					} else {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("consumed", "==", values.consumed),
+						where("name", "==", values.name),
+						where("type", "==", values.type)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					}
 				    } else {
-					const q = query(
-					    collection(db, "banana"), 
-					    where("uid", "==", googleUser.uid), 
-					    where("consumed", "==", values.consumed),
-					    where("name", "==", values.name)
-					);
-					const list = await getDocs(q);
-					setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-					setSubmitting(false);
+					if (values.rating !== "") {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("consumed", "==", values.consumed),
+						where("name", "==", values.name),
+						where("rating", "==", values.rating)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					} else {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("consumed", "==", values.consumed),
+						where("name", "==", values.name)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					    }
 				    }
 				} else {
 				    if (values.type !== "") {
-					const q = query(
-					    collection(db, "banana"), 
-					    where("uid", "==", googleUser.uid), 
-					    where("consumed", "==", values.consumed),
-					    where("type", "==", values.type)
-					);
-					const list = await getDocs(q);
-					setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-					setSubmitting(false);
+					if (values.rating !== "") {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("consumed", "==", values.consumed),
+						where("type", "==", values.type),
+						where("rating", "==", values.rating)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					} else {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("consumed", "==", values.consumed),
+						where("type", "==", values.type)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					}
 				    } else {
-					const q = query(
-					    collection(db, "banana"), 
-					    where("uid", "==", googleUser.uid), 
-					    where("consumed", "==", values.consumed)
-					);
-					const list = await getDocs(q);
-					setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-					setSubmitting(false);
+					if (values.rating !== "") {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("consumed", "==", values.consumed),
+						where("rating", "==", values.rating)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					} else {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("consumed", "==", values.consumed)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					}
 				    }
 				}
 			    } else {
 				if (values.name !== "") {
 				    if (values.type !== "") {
-					const q = query(
-					    collection(db, "banana"), 
-					    where("uid", "==", googleUser.uid), 
-					    where("name", "==", values.name),
-					    where("type", "==", values.type)
-					);
-					const list = await getDocs(q);
-					setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-					setSubmitting(false);
+					if (values.rating !== "") {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("name", "==", values.name),
+						where("type", "==", values.type),
+						where("rating", "==", values.rating)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					} else {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("name", "==", values.name),
+						where("type", "==", values.type)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					}
 				    } else {
-					const q = query(
-					    collection(db, "banana"), 
-					    where("uid", "==", googleUser.uid), 
-					    where("name", "==", values.name)
-					);
-					const list = await getDocs(q);
-					setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-					setSubmitting(false);
+					if (values.rating !== "") {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("name", "==", values.name),
+						where("rating", "==", values.rating)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					} else {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("name", "==", values.name)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					}
 				    }
 				} else {
 				    if (values.type !== "") {
-					const q = query(
-					    collection(db, "banana"), 
-					    where("uid", "==", googleUser.uid), 
-					    where("type", "==", values.type)
-					);
-					const list = await getDocs(q);
-					setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-					setSubmitting(false);
+					if (values.rating !== "") {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("type", "==", values.type),
+						where("rating", "==", values.rating)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					} else {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("type", "==", values.type)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					}
 				    } else {
-					const q = query(
-					    collection(db, "banana"), 
-					    where("uid", "==", googleUser.uid), 
-					);
-					const list = await getDocs(q);
-					setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
-					setSubmitting(false);
+					if (values.rating !== "") {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+						where("rating", "==", values.rating)
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					} else {
+					    const q = query(
+						collection(db, "banana"), 
+						where("uid", "==", googleUser.uid), 
+					    );
+					    const list = await getDocs(q);
+					    setItems(list.docs.map((doc) => (({...doc.data(), id: doc.id}))));
+					    setSubmitting(false);
+					}
 				    }
 				}
 			    }
@@ -141,7 +243,17 @@ function List() {
 		    {({ isSubmitting }) => (
 			<Form>
 			    <Container maxWidth="md">
-				<Typography variant="h3" sx={{my: 1}}>list</Typography>
+				<Stack direction="row">
+				    <Typography 
+					variant="h3" 
+					color="primary" 
+					sx={{cursor: "pointer", my: 1}} 
+					onClick={() => navigate("/")}
+				    >
+					home 
+				    </Typography>
+				    <Typography variant="h3" sx={{my: 1}}>/list</Typography>
+				</Stack>
 				<Typography variant="h6" sx={{my: 1}}>{googleError}</Typography>
 				<MyTextField 
 				    id="type"
@@ -154,6 +266,12 @@ function List() {
 				    type="text" 
 				    name="name" 
 				    label="Name"
+				/>
+				<MyTextField
+				    id="rating"
+				    name="rating"
+				    label="Rating"
+				    type="number"
 				/>
 				<Stack sx={{width: "100%", my: 1}}>
 				    <Typography variant="h6">Consumed:</Typography>

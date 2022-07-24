@@ -23,8 +23,17 @@ function Home(){
 	    <Container maxWidth="xs" sx={{display: "flex", alignItems: "center", flexDirection: "column", mt: 8}}>
 		<Typography variant="h3" sx={{my: 1}}>home</Typography>
 		<Stack spacing={2}>
-		    {googleUser 
+		    {!googleUser 
 			? 
+			    <>
+				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/login")}}>
+				    log in
+				</Button>
+				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/register")}}>
+				    register
+				</Button>
+			    </>
+			:
 			    <>
 				<Button variant="contained" sx={styleButton} onClick={() => {signOut(auth)}}>
 				    sign out
@@ -34,15 +43,6 @@ function Home(){
 				</Button>
 				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/list")}}>
 				    list
-				</Button>
-			    </>
-			:
-			    <>
-				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/login")}}>
-				    log in
-				</Button>
-				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/register")}}>
-				    register
 				</Button>
 			    </>
 		    }
