@@ -41,7 +41,7 @@ function List() {
 	<>
 	    <Container>
 		<Formik
-		    initialValues={{ name: '', type: '', consumed: ''}}
+		    initialValues={{ name: '', type: '', consumed: '', rating: ''}}
 		    validationSchema={validationSchema}
 		    onSubmit={ async (values, { setSubmitting }) => {
 			try {
