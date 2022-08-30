@@ -34,3 +34,4 @@ If there were no problems, the website should be running on port 3000.
 - Make home prettier and add a brief explanation of the website.
 - Add favicon.
 - Replace firebase database with server built in go and MySQL database.
+- Add support for password recovery.

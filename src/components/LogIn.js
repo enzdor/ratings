@@ -9,6 +9,7 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import { Login } from "../services/userServices";
 import * as yup from "yup";
 
 
@@ -32,14 +33,8 @@ function LogIn(){
 	    initialValues={{email: '', password: ''}}
 	    onSubmit={async (values, { setSubmitting }) => {
 		setSubmitting(true);
-		try {
-		    await signInWithEmailAndPassword(auth, values.email, values.password);
-		    setSubmitting(false);
-		    navigate('/');
-		} catch (e) {
-		    setGoogleError(e.message);
-		    setSubmitting(false);
-		}
+		await Login(values);
+		setSubmitting(false);
 	    }}
 	    validationSchema={validationSchema}
 	    enableReinitialize={true}
