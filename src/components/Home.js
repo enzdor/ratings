@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { auth } from "../firebase";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import useToken from "../zustand";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
@@ -12,6 +13,7 @@ const styleButton = {
 }
 
 function Home(){
+    const token = useToken(state => state.token)
     const navigate = useNavigate();
     const [googleUser, setGoogleUser] = useState({});
     onAuthStateChanged(auth, (user) => {
@@ -31,6 +33,9 @@ function Home(){
 				</Button>
 				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/register")}}>
 				    register
+				</Button>
+				<Button variant="contained" sx={styleButton} onClick={() => console.log(token)}>
+				    token
 				</Button>
 			    </>
 			:

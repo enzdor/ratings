@@ -1,6 +1,4 @@
-import  React, { useState } from "react";
-import { auth } from "../firebase";
-import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import  React, { useState, useEffect } from "react";
 import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 import MyTextField from "./MyTextField";
@@ -8,6 +6,8 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { RegisterService } from "../services/userServices";
+import useToken from "../zustand";
 import * as yup from "yup";
 
 
@@ -17,26 +17,33 @@ const validationSchema = yup.object({
 })
 
 function Register(){
-    const [googleError, setGoogleError] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
-    onAuthStateChanged(auth, (user) => {
-	if (user) {
+    const token = useToken(state => state.token)
+    const setToken = useToken(state => state.setToken)
+    useEffect(() => {
+	if (token !== "") {
 	    navigate("/")
-	} 
-    })
+	}
+    }, [token])
 
 
     return (
 	<Formik 
 	    initialValues={{email: '', password: ''}}
 	    onSubmit={async (values, { setSubmitting }) => {
-		setSubmitting(true);
 		try {
-		    await createUserWithEmailAndPassword(auth, values.email, values.password);
-		    setSubmitting(false);
-		    navigate('/');
+		    setSubmitting(true);
+		    let result = await RegisterService(values);
+		    if (result.response) {
+			setError(result.response.data.Message)
+			setSubmitting(false)
+		    } else {
+			setToken(result.data)
+			setSubmitting(false);
+		    }
 		} catch (e) {
-		    setGoogleError(e.message);
+		    setError(e.message);
 		    setSubmitting(false);
 		}
 	    }}
@@ -54,7 +61,7 @@ function Register(){
 			    }}
 			>
 			    <Typography variant="h3" sx={{my: 1}}>register</Typography>
-			    <Typography variant="h6" sx={{my: 1}}>{googleError}</Typography>
+			    <Typography variant="h6" sx={{my: 1}}>{error}</Typography>
 			    <Stack sx={{width: "100%"}}>
 				<MyTextField 
 				    id="email"

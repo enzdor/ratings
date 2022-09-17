@@ -11,7 +11,7 @@ async function Login(user) {
 	}
 }
 
-async function Register(user) {
+async function RegisterService(user) {
 	try {
 		let result = await axios.post(url + "/api/users/register", user)
 		return result
@@ -29,4 +29,4 @@ async function Logout(user) {
 	}
 }
 
-export { Login, Logout };
+export { Login, Logout, RegisterService};
