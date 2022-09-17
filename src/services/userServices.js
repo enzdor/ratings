@@ -6,7 +6,6 @@ async function Login(user) {
 	try {
 		let result = await axios.post(url + "/api/users/login", user)
 		return result
-
 	} catch(e) {
 		return e
 	}
@@ -30,4 +29,4 @@ async function Logout(user) {
 	}
 }
 
-export {Login};
+export { Login, Logout };

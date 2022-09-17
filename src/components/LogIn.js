@@ -9,19 +9,23 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { Login } from "../services/userServices";
+import { Login, Logout } from "../services/userServices";
+import { GetRatingById } from "../services/ratingServices";
+import useToken from "../zustand";
 import * as yup from "yup";
 
 
 const validationSchema = yup.object({
     email: yup.string().email().required(),
-    password: yup.string().min(6).required()
+    password: yup.string().min(3).required()
 })
 
 
 function LogIn(){
     const [googleError, setGoogleError] = useState('');
     const navigate = useNavigate();
+    const token = useToken(state => state.token)
+    const setToken = useToken(state => state.setToken)
     onAuthStateChanged(auth, (user) => {
 	if (user) {
 	    navigate("/")
@@ -32,10 +36,28 @@ function LogIn(){
 	<Formik 
 	    initialValues={{email: '', password: ''}}
 	    onSubmit={async (values, { setSubmitting }) => {
-		setSubmitting(true);
-		await Login(values);
-		setSubmitting(false);
+		try {
+		    setSubmitting(true);
+		    let result = await Login(values);
+		    setToken(result.data)
+		    setSubmitting(false);
+		} catch (e) {
+		    console.log(e)
+		}
 	    }}
+	    /*
+	    onSubmit={async (values, { setSubmitting }) => {
+		setSubmitting(true);
+		try {
+		    await signInWithEmailAndPassword(auth, values.email, values.password);
+		    setSubmitting(false);
+		    navigate('/');
+		} catch (e) {
+		    setGoogleError(e.message);
+		    setSubmitting(false);
+		}
+	    }}
+	    */
 	    validationSchema={validationSchema}
 	    enableReinitialize={true}
 	>
@@ -65,6 +87,12 @@ function LogIn(){
 				/>
 				<Button type="submit" disabled={isSubmitting} variant="contained" sx={{my: 3}}>
 				    Submit
+				</Button>
+				<Button variant="contained" sx={{my: 3}} onClick={() => Logout()}>
+				    Logout
+				</Button>
+				<Button variant="contained" sx={{my: 3}} onClick={() => (GetRatingById(22, token))}>
+				    Hello
 				</Button>
 			    </Stack>
 			</Container>
