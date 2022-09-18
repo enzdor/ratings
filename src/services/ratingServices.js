@@ -16,5 +16,23 @@ async function GetRatingById(id, token) {
     }
 }
 
+async function PostRating(rating, token) {
+    if (rating.consumed === "true") {
+	rating.consumed = true
+    } else if (rating.consumed === "false") {
+	rating.consumed = false
+    }
+    try {
+	let target = url + "/api/ratings/";
+	let result = await axios.post(target, rating, {
+	    headers: {
+		"jwt-token": token,
+	    },
+	})
+	return result
+    } catch (e) {
+	return e
+    }
+}
 
-export { GetRatingById };
+export { GetRatingById, PostRating };

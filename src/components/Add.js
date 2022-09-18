@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
@@ -10,12 +10,14 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { PostRating } from "../services/ratingServices";
+import useToken from "../zustand";
 import * as yup from "yup";
 
 
 const validationSchema = yup.object({
     name: yup.string().required(),
-    type: yup.string().required(),
+    entry_type: yup.string().required(),
     rating: yup.number().required().min(0).max(10),
     consumed: yup.string().required()
 })
@@ -23,32 +25,31 @@ const validationSchema = yup.object({
 
 function Add() {
     const navigate = useNavigate();
-    const [googleError, setGoogleError] = useState('');
+    const [error, setError] = useState('');
     const [googleUser, setGoogleUser] = useState({});
-    onAuthStateChanged(auth, (user) => {
-	if (!user) {
-	    navigate("/");
-	} else {
-	    setGoogleUser(user);
+    const token = useToken(state => state.token)
+    useEffect(() => {
+	if (token === "") {
+	    navigate("/")
 	}
-    })
+    }, [token])
 
     return (
 	<Formik
-	    initialValues={{name: '', type: '', rating: '', consumed: ''}}
+	    initialValues={{name: '', entry_type: '', rating: '', consumed: ''}}
 	    onSubmit={async (values, { setSubmitting }) => {
 		try {
-		    await addDoc(collection(db, "banana"), {
-			    name: values.name,
-			    type: values.type,
-			    rating: values.rating,
-			    uid: googleUser.uid,
-			    consumed: values.consumed,
-		    });
-		    navigate('/');
+		    setSubmitting(true);
+		    const result = await PostRating({...values, "user_id": 0}, token);
+		    if (result.response) {
+			setError(result.response.data.Message)
+			setSubmitting(false)
+		    } else {
+			navigate('/');
+			setSubmitting(false);
+		    }
 		} catch (e) {
-		    setGoogleError(e.message);
-		    setSubmitting(false);
+		    setError(e);
 		}
 	    }}
 	    validationSchema={validationSchema}
@@ -66,7 +67,7 @@ function Add() {
 			}}
 		    >
 			<Typography variant="h3" sx={{my: 1}}>add</Typography>
-			<Typography variant="h6" sx={{my: 1}}>{googleError}</Typography>
+			<Typography variant="h6" sx={{my: 1}}>{error}</Typography>
 			<Stack sx={{width: "100%"}}>
 			    <MyTextField
 				id="name"
@@ -74,8 +75,8 @@ function Add() {
 				label="Name"
 			    />
 			    <MyTextField
-				id="type"
-				name="type"
+				id="entry_type"
+				name="entry_type"
 				label="Type"
 			    />
 			    <MyTextField

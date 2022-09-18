@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-import { auth } from "../firebase";
-import { signOut, onAuthStateChanged } from "firebase/auth";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useToken from "../zustand";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
+import { GetRatingById } from "../services/ratingServices";
 
 const styleButton = {
     width: "10rem",
@@ -14,18 +13,23 @@ const styleButton = {
 
 function Home(){
     const token = useToken(state => state.token)
+    const setToken = useToken(state => state.setToken)
     const navigate = useNavigate();
-    const [googleUser, setGoogleUser] = useState({});
-    onAuthStateChanged(auth, (user) => {
-	setGoogleUser(user);
-    })
+    const [isToken, setIsToken] = useState(false);
+    useEffect(() => {
+	if (token !== "") {
+	    setIsToken(true)
+	} else {
+	    setIsToken(false)
+	}
+    }, [token])
 
     return (
 	<>
 	    <Container maxWidth="xs" sx={{display: "flex", alignItems: "center", flexDirection: "column", mt: 8}}>
 		<Typography variant="h3" sx={{my: 1}}>home</Typography>
 		<Stack spacing={2}>
-		    {!googleUser 
+		    {!isToken 
 			? 
 			    <>
 				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/login")}}>
@@ -34,13 +38,10 @@ function Home(){
 				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/register")}}>
 				    register
 				</Button>
-				<Button variant="contained" sx={styleButton} onClick={() => console.log(token)}>
-				    token
-				</Button>
 			    </>
 			:
 			    <>
-				<Button variant="contained" sx={styleButton} onClick={() => {signOut(auth)}}>
+				<Button variant="contained" sx={styleButton} onClick={() => {setToken("")}}>
 				    sign out
 				</Button>
 				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/add")}}>
@@ -48,6 +49,9 @@ function Home(){
 				</Button>
 				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/list")}}>
 				    list
+				</Button>
+				<Button variant="contained" sx={styleButton} onClick={() => {GetRatingById(22, token)}}>
+				    get token
 				</Button>
 			    </>
 		    }
