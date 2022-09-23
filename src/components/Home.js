@@ -50,9 +50,6 @@ function Home(){
 				<Button variant="contained" sx={styleButton} onClick={() => {navigate("/list")}}>
 				    list
 				</Button>
-				<Button variant="contained" sx={styleButton} onClick={() => {GetRatingById(22, token)}}>
-				    get token
-				</Button>
 			    </>
 		    }
 		</Stack>

@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { db, auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
 import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 import MyTextField from "./MyTextField";
@@ -26,7 +23,6 @@ const validationSchema = yup.object({
 function Add() {
     const navigate = useNavigate();
     const [error, setError] = useState('');
-    const [googleUser, setGoogleUser] = useState({});
     const token = useToken(state => state.token)
     useEffect(() => {
 	if (token === "") {
