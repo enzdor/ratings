@@ -46,7 +46,7 @@ async function SearchRatingsByUserId(rating, token) {
     rating = formatRating(rating)
     if (rating.consumed === true) {
 	rating.consumed = 1;
-    } else if (!rating.consumed === false){
+    } else if (rating.consumed === false){
 	rating.consumed = 0;
     } else {
 	rating.consumed = -1;
@@ -95,5 +95,18 @@ async function PatchRating(id, rating, token) {
     }
 }
 
+async function DeleteRatingById(id, token) {
+    try {
+	let target = url + "/api/ratings/" + id;
+	let result = await axios.delete(target, {
+	    headers: {
+		"jwt-token": token,
+	    }
+	})
+	return result
+    } catch (e) {
+	return e
+    }
+}
 
-export { SearchRatingsByUserId, PostRating, GetRatingById, PatchRating };
+export { SearchRatingsByUserId, PostRating, GetRatingById, PatchRating, DeleteRatingById };

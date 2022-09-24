@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { Login, Logout } from "../services/userServices";
+import { Login } from "../services/userServices";
 import useToken from "../zustand";
 import * as yup from "yup";
 
@@ -75,9 +75,6 @@ function LogIn(){
 				/>
 				<Button type="submit" disabled={isSubmitting} variant="contained" sx={{my: 3}}>
 				    Submit
-				</Button>
-				<Button variant="contained" sx={{my: 3}} onClick={() => Logout()}>
-				    Logout
 				</Button>
 			    </Stack>
 			</Container>

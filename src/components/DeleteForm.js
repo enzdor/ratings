@@ -1,35 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { db, auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, deleteDoc } from "firebase/firestore";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { DeleteRatingById } from "../services/ratingServices";
+import useToken from "../zustand";
 
 function DeleteForm(props) {
     const [isSubmitting, setSubmitting] = useState(false);
-    const [googleError, setGoogleError] = useState("");
+    const [error, setError] = useState("");
+    const token = useToken(state => state.token);
     const navigate = useNavigate();
-    onAuthStateChanged(auth, (user) => {
-	if (user) {
-	    if (user.uid !== props.item.uid) {
-		navigate("/");
-	    }
-	} 
-    });
 
-    async function deleteBookGoogle(event){
+    async function deleteBook(event){
 	event.preventDefault();
 	try {
 	    setSubmitting(true);
-	    const itemDoc = doc(db, "banana", props.item.id);
-	    await deleteDoc(itemDoc);
-	    setSubmitting(false);
-	    navigate("/");
+	    const result = await DeleteRatingById(props.item.rating_id, token);
+	    if (result.response) {
+		setError(result.response.data.Message)
+		setSubmitting(false)
+	    } else {
+		setSubmitting(false);
+		navigate("/");
+	    }
 	} catch (e) {
-	    setGoogleError(e.message);
+	    setError(e.message);
 	    setSubmitting(false);
 	}
     };
@@ -45,9 +42,9 @@ function DeleteForm(props) {
 	    }}
 	>
 	    <Typography variant="h3" sx={{my: 1}}>delete {props.item.name} entry</Typography>
-	    <Typography variant="h6" sx={{my: 1}}>{googleError}</Typography>
+	    <Typography variant="h6" sx={{my: 1}}>{error}</Typography>
 	    <Stack sx={{width: "100%"}}>
-		<Button variant="contained" type="submit" disabled={isSubmitting} onClick={deleteBookGoogle} sx={{my: 3}}>
+		<Button variant="contained" type="submit" disabled={isSubmitting} onClick={deleteBook} sx={{my: 3}}>
 		    delete
 		</Button>
 		<Button variant="contained" onClick={() => navigate("/list")} disabled={isSubmitting}>

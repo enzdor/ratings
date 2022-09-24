@@ -11,14 +11,12 @@ import { PostRating } from "../services/ratingServices";
 import useToken from "../zustand";
 import * as yup from "yup";
 
-
 const validationSchema = yup.object({
     name: yup.string().required(),
     entry_type: yup.string().required(),
     rating: yup.number().required().min(0).max(10),
     consumed: yup.string().required()
 })
-
 
 function Add() {
     const navigate = useNavigate();
