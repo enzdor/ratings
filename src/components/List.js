@@ -133,10 +133,10 @@ function List() {
 					<Typography variant="h6" sx={{mt: 1}}>Consumed: {item.consumed ? "true" : "false"}</Typography>
 				    </CardContent>
 				    <CardActions>
-					<Button onClick={() => {navigate(`/edit/${item.id}`)}}>
+					<Button onClick={() => {navigate(`/edit/${item.rating_id}`)}}>
 					    edit
 					</Button>
-					<Button onClick={() => {navigate(`/delete/${item.id}`)}}>
+					<Button onClick={() => {navigate(`/delete/${item.rating_id}`)}}>
 					    delete
 					</Button>
 				    </CardActions>

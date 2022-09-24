@@ -23,7 +23,7 @@ const validationSchema = yup.object({
 function Add() {
     const navigate = useNavigate();
     const [error, setError] = useState('');
-    const token = useToken(state => state.token)
+    const token = useToken(state => state.token);
     useEffect(() => {
 	if (token === "") {
 	    navigate("/")
@@ -36,7 +36,7 @@ function Add() {
 	    onSubmit={async (values, { setSubmitting }) => {
 		try {
 		    setSubmitting(true);
-		    const result = await PostRating({...values, "user_id": 0}, token);
+		    const result = await PostRating({...values, user_id: 0}, token);
 		    if (result.response) {
 			setError(result.response.data.Message)
 			setSubmitting(false)

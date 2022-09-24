@@ -29,6 +29,13 @@ async function GetRatingById(id, token) {
 		"jwt-token": token,
 	    }
 	})
+	if (result.data) {
+	    if (result.data.consumed === true) {
+		result.data.consumed = "true"
+	    } else if (result.data.consumed === false){
+		result.data.consumed = "false"
+	    }
+	}
 	return result
     } catch (e) {
 	return e
@@ -37,10 +44,12 @@ async function GetRatingById(id, token) {
 
 async function SearchRatingsByUserId(rating, token) {
     rating = formatRating(rating)
-    if (rating.consumed) {
+    if (rating.consumed === true) {
 	rating.consumed = 1;
-    } else if (!rating.consumed){
+    } else if (!rating.consumed === false){
 	rating.consumed = 0;
+    } else {
+	rating.consumed = -1;
     } 
 
     try {
@@ -71,4 +80,20 @@ async function PostRating(rating, token) {
     }
 }
 
-export { SearchRatingsByUserId, PostRating, GetRatingById };
+async function PatchRating(id, rating, token) {
+    rating = formatRating(rating)
+    try {
+	let target = url + "/api/ratings/" + id;
+	let result = await axios.patch(target, rating, {
+	    headers: {
+		"jwt-token": token,
+	    },
+	})
+	return result
+    } catch (e) {
+	return e
+    }
+}
+
+
+export { SearchRatingsByUserId, PostRating, GetRatingById, PatchRating };

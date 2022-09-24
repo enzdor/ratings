@@ -35,3 +35,4 @@ If there were no problems, the website should be running on port 3000.
 - Add favicon.
 - Replace firebase database with server built in go and MySQL database.
 - Add support for password recovery.
+- Fix bug when reloading edit page

@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { Formik, Form, Field } from "formik";
-import { doc, updateDoc } from "firebase/firestore";
-import { db, auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { Formik, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 import MyTextField from "./MyTextField";
 import MyRadio from "./MyRadio";
@@ -10,51 +7,44 @@ import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import useToken from "../zustand";
+import { PatchRating } from "../services/ratingServices";
 import * as yup from "yup";
 
 const validationSchema = yup.object({
     name: yup.string().required(),
-    type: yup.string().required(),
+    entry_type: yup.string().required(),
     rating: yup.number().required().min(0).max(10),
     consumed: yup.string().required()
 })
 
 
 function EditForm(props) {
-    const [googleError, setGoogleError] = useState();
-    const [googleUser, setGoogleUser] = useState({});
+    const [error, setError] = useState();
+    const token = useToken(state => state.token);
     const navigate = useNavigate();
-    onAuthStateChanged(auth, (user) => {
-	if (user) {
-	    if (user.uid !== props.item.uid) {
-	    }
-	    setGoogleUser(user);
-	} 
-    })
 
     return (
 	<Formik
 	    initialValues={{
 		name: props.item.name, 
-		type: props.item.type, 
+		entry_type: props.item.entry_type, 
 		rating: props.item.rating, 
 		consumed: props.item.consumed
 	    }}
 	    onSubmit={async (values, { setSubmitting }) => {
 		try {
-		    const itemDoc = doc(db, "banana", props.item.id);
-		    await updateDoc(itemDoc, {
-			name: values.name,
-			rating: values.rating,
-			type: values.type,
-			uid: googleUser.uid,
-			consumed: values.consumed
-		    })
-		    setSubmitting(false);
-		    navigate("/");
+		    setSubmitting(true);
+		    const result = await PatchRating(props.item.rating_id, {...values, user_id: 0}, token);
+		    if (result.response) {
+			setError(result.response.data.Message)
+			setSubmitting(false)
+		    } else {
+			navigate('/');
+			setSubmitting(false);
+		    }
 		} catch (e) {
-		    setGoogleError(e.message);
-		    setSubmitting(false);
+		    setError(e);
 		}
 	    }}
 	    validationSchema={validationSchema}
@@ -72,7 +62,7 @@ function EditForm(props) {
 			}}
 		    >
 			<Typography variant="h3" sx={{my: 1}}>edit</Typography>
-			<Typography variant="h6" sx={{my: 1}}>{googleError}</Typography>
+			<Typography variant="h6" sx={{my: 1}}>{error}</Typography>
 			<Stack sx={{width: "100%"}}>
 			    <MyTextField
 				id="name"
@@ -81,7 +71,7 @@ function EditForm(props) {
 			    />
 			    <MyTextField
 				id="type"
-				name="type"
+				name="entry_type"
 				label="Type"
 			    />
 			    <MyTextField
