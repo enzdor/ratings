@@ -9,6 +9,7 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import useToken from "../zustand";
 import { PatchRating } from "../services/ratingServices";
+import { Extend } from "../services/userServices";
 import * as yup from "yup";
 
 const validationSchema = yup.object({
@@ -22,6 +23,7 @@ const validationSchema = yup.object({
 function EditForm(props) {
     const [error, setError] = useState();
     const token = useToken(state => state.token);
+    const setToken = useToken(state => state.setToken);
     const navigate = useNavigate();
 
     return (
@@ -43,6 +45,8 @@ function EditForm(props) {
 			navigate('/');
 			setSubmitting(false);
 		    }
+		    const newToken = await Extend(token);
+		    setToken(newToken);
 		} catch (e) {
 		    setError(e);
 		}

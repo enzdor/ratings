@@ -5,12 +5,14 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { DeleteRatingById } from "../services/ratingServices";
+import { Extend } from "../services/userServices";
 import useToken from "../zustand";
 
 function DeleteForm(props) {
     const [isSubmitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const token = useToken(state => state.token);
+    const setToken = useToken(state => state.setToken);
     const navigate = useNavigate();
 
     async function deleteBook(event){
@@ -25,6 +27,8 @@ function DeleteForm(props) {
 		setSubmitting(false);
 		navigate("/");
 	    }
+	    const newToken = await Extend(token);
+	    setToken(newToken);
 	} catch (e) {
 	    setError(e.message);
 	    setSubmitting(false);

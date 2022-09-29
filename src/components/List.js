@@ -12,6 +12,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import { SearchRatingsByUserId } from "../services/ratingServices";
+import { Extend } from "../services/userServices";
 import useToken from "../zustand";
 import * as yup from "yup";
 
@@ -27,6 +28,8 @@ function List() {
     const [items, setItems] = useState([]);
     const [error, setError] = useState('');
     const token = useToken(state => state.token)
+    const setToken = useToken(state => state.setToken)
+
     useEffect(() => {
 	if (token === "") {
 	    navigate("/")
@@ -50,6 +53,8 @@ function List() {
 				setItems(result.data);
 				setSubmitting(false);
 			    }
+			    const newToken = await Extend(token);
+			    setToken(newToken);
 			} catch (e){
 			    setError(e)
 			}

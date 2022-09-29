@@ -5,7 +5,6 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import { GetRatingById } from "../services/ratingServices";
 
 const styleButton = {
     width: "10rem",
@@ -23,6 +22,7 @@ function Home(){
 	    setIsToken(false)
 	}
     }, [token])
+
 
     return (
 	<>

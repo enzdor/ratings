@@ -8,6 +8,7 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { PostRating } from "../services/ratingServices";
+import { Extend } from "../services/userServices";
 import useToken from "../zustand";
 import * as yup from "yup";
 
@@ -22,6 +23,7 @@ function Add() {
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const token = useToken(state => state.token);
+    const setToken = useToken(state => state.setToken);
     useEffect(() => {
 	if (token === "") {
 	    navigate("/")
@@ -42,6 +44,8 @@ function Add() {
 			navigate('/');
 			setSubmitting(false);
 		    }
+		    const newToken = await Extend(token);
+		    setToken(newToken);
 		} catch (e) {
 		    setError(e);
 		}
